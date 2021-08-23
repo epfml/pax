@@ -2,7 +2,10 @@ from jax.tree_util import tree_map, tree_flatten, tree_leaves
 import inspect
 import torch
 from typing import Callable, Union, Sequence, Tuple, Any
+from pax.utils import StackCounter
 
+
+GRAD_COUNTER = StackCounter()
 
 def value_and_grad(
     fun: Callable,
@@ -20,47 +23,48 @@ def value_and_grad(
     argnums = [argnums] if type(argnums) is int else argnums
 
     def value_and_grad_f(*args, **kwargs):
-        if max(argnums) >= len(args):
-            msg = (
-                "differentiating with respect to argnums={} requires at least "
-                "{} positional arguments to be passed by the caller, but got only "
-                "{} positional arguments."
-            )
-            raise TypeError(msg.format(argnums, max(argnums) + 1, len(args)))
-
-        _check_callable(fun)
-
-        # We will modify the requires_grad attributes, but want to reset them
-        original_requires_grad = tree_map(lambda t: torch.is_tensor(t) and t.requires_grad, args)
-
-        try:
-            new_args = []
-            for num, arg in enumerate(args):
-                new_arg = tree_map(
-                    lambda x: _force_tensor(x).requires_grad_(num in argnums), arg
+        with GRAD_COUNTER.increment():
+            if max(argnums) >= len(args):
+                msg = (
+                    "differentiating with respect to argnums={} requires at least "
+                    "{} positional arguments to be passed by the caller, but got only "
+                    "{} positional arguments."
                 )
-                new_args.append(new_arg)
+                raise TypeError(msg.format(argnums, max(argnums) + 1, len(args)))
 
-            if not has_aux:
-                ans = fun(*new_args, **kwargs)
-            else:
-                ans, aux = fun(*new_args, **kwargs)
-            args_to_pass, treedef = tree_flatten([new_args[a] for a in argnums])
-            g = torch.autograd.grad(
-                ans, args_to_pass, allow_unused=allow_unused, create_graph=create_graph
-            )
-            g = treedef.unflatten(g)
-            if not argnums_is_sequence:
-                g = g[0]
-            if not has_aux:
-                return ans.detach(), g
-            else:
-                return (ans.detach(), aux), g
-        finally:
-            # Restore original requires_grad attributes
-            for t, requires_grad in zip(tree_leaves(args), tree_leaves(original_requires_grad)):
-                if torch.is_tensor(t) and t.requires_grad != requires_grad:
-                    t.requires_grad_(requires_grad)
+            _check_callable(fun)
+
+            # We will modify the requires_grad attributes, but want to reset them later
+            original_requires_grad = tree_map(lambda t: torch.is_tensor(t) and t.requires_grad, args)
+
+            try:
+                new_args = []
+                for num, arg in enumerate(args):
+                    new_arg = tree_map(
+                        lambda x: _force_tensor(x).requires_grad_(num in argnums), arg
+                    )
+                    new_args.append(new_arg)
+
+                if not has_aux:
+                    ans = fun(*new_args, **kwargs)
+                else:
+                    ans, aux = fun(*new_args, **kwargs)
+                args_to_pass, treedef = tree_flatten([new_args[a] for a in argnums])
+                g = torch.autograd.grad(
+                    ans, args_to_pass, allow_unused=allow_unused, create_graph=create_graph or GRAD_COUNTER.value > 1
+                )
+                g = treedef.unflatten(g)
+                if not argnums_is_sequence:
+                    g = g[0]
+                if not has_aux:
+                    return ans.detach(), g
+                else:
+                    return (ans.detach(), aux), g
+            finally:
+                # Restore original requires_grad attributes
+                for t, requires_grad in zip(tree_leaves(args), tree_leaves(original_requires_grad)):
+                    if torch.is_tensor(t) and t.requires_grad != requires_grad:
+                        t.requires_grad_(requires_grad)
 
     return value_and_grad_f
 
