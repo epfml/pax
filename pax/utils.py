@@ -1,15 +1,18 @@
-from contextlib import contextmanager
+from collections import deque
 
 
-class StackCounter:
+class CallStack:
     def __init__(self):
-        self.value = 0
+        self.stack = deque()
     
-    @contextmanager
-    def increment(self):
-        prev_value = self.value
-        try:
-            self.value += 1
-            yield 
-        finally:
-            self.value = prev_value
+    def register(self, fun):
+        def wrapped_fun(*args, **kwargs):
+            try:
+                self.stack.append(fun)
+                return fun(*args, **kwargs)
+            finally:
+                self.stack.pop()
+        return wrapped_fun
+
+    def __len__(self):
+        return len(self.stack)

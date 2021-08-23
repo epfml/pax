@@ -63,32 +63,3 @@ def f(x):
 # %%
 wrap(f)(3)
 # %%
-
-from contextlib import contextmanager
-
-class ContextFlag:
-    def __init__(self):
-        self.value = False
-    
-    @contextmanager
-    def set(self, value: bool = True):
-        prev_value = self.value
-        try:
-            self.value = value
-            yield 
-        finally:
-            self.value = prev_value
-        
-    def __bool__(self):
-        return self.value
-
-create_graph_flag = ContextFlag()
-
-print("yes" if create_graph_flag else "no")
-with create_graph_flag.set():
-    print("yes" if create_graph_flag else "no")
-    with create_graph_flag.set():
-        print("yes" if create_graph_flag else "no")
-    print("yes" if create_graph_flag else "no")
-print("yes" if create_graph_flag else "no")
-# %%
