@@ -1,2 +1,2 @@
 # PAX
-JAX-like API on top of PyTorch
+Sharing some of JAX's beautiful API with PyTorch users.
