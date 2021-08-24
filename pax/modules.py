@@ -12,9 +12,13 @@ def functional_module(module: torch.nn.Module, preserve_original: bool = True):
         else:
             module.eval()
 
-        for param, value in zip(module.parameters(), params):
-            param.data = value
-
+        for (name, param), value in zip(list(module.named_parameters()), params):
+            path = name.split(".")
+            mod = module
+            for p in path[:-1]:
+                mod = getattr(mod, p)
+            mod._parameters[path[-1]] = value
+        
         if buffers is not None:
             for buffer, value in zip(module.buffers(), buffers):
                 buffer.data = value.detach().clone()
