@@ -42,7 +42,6 @@ This works with any Pytree as input:
 def f(x):
     return x["a"] * x["b"]
 
-
 x = {"a": 2.0, "b": -1.5}
 pax.value_and_grad(f)(x)  # (tensor(-3.), {'a': tensor(-1.5000), 'b': tensor(2.)})
 ```
