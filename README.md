@@ -35,7 +35,7 @@ df_dx = pax.grad(f)
 df_dx(2.0)  # tensor(4.0)
 ```
 
-This Works with any Pytree as input:
+This works with any Pytree as input:
 
 ```python
 def f(x):
