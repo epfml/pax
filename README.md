@@ -121,3 +121,10 @@ for step in range(10):
     opt_state = optimizer.scheduler_step(opt_state)  # replaces scheduler.step()
     print(params.item())
 ```
+
+## Runtime overhead
+
+We measured the time required for one epoch on CIFAR-10 with a batch size of 128.
+We compare a standard PyTorch implementation based on [this tutorial](https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html) to a PAX one, using `pax.value_and_grad`, `pax.functional_module` and `pax.functional_optimizer`. There is a small constant runtime overhead of using PAX. The peak memory usage could be larger too.
+
+![PAX Benchmark](benchmark.png)

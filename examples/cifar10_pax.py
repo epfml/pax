@@ -19,7 +19,7 @@ transform = transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-batch_size = 4
+batch_size = 128
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=transform)
@@ -60,7 +60,7 @@ forward = pax.functional_module(net)
 params = [p.data for p in net.parameters()]
 
 criterion = nn.CrossEntropyLoss()
-optimizer = pax.functional_optimizer(optim.SGD, lr=0.001, momentum=0.9)
+optimizer = pax.functional_optimizer(optim.SGD, lr=0.05, momentum=0.9)
 
 opt_state = optimizer.init(params)
 
@@ -70,10 +70,12 @@ def loss(params, inputs, labels):
 
 loss_and_gradient = pax.value_and_grad(loss)
 
+torch.cuda.synchronize()
 start_time = time.time_ns()
 
 for epoch in range(2):  # loop over the dataset multiple times
     running_loss = 0.0
+    n = 0
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data[0].to(device), data[1].to(device)
 
@@ -82,11 +84,11 @@ for epoch in range(2):  # loop over the dataset multiple times
 
         # print statistics
         running_loss += loss.item()
-        if i % 2000 == 1999:    # print every 2000 mini-batches
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 2000))
-            running_loss = 0.0
+        n += 1
 
+    print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / n))
+
+torch.cuda.synchronize()
 end_time = time.time_ns()
 
 print('Finished Training in {}s'.format((end_time - start_time) / 1e9))
