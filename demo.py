@@ -33,33 +33,54 @@ net = torch.nn.Sequential(
     torch.nn.BatchNorm1d(2),
     torch.nn.Linear(2, 1),
 )
-forward = pax.functional(net)
+forward = pax.functional_module(net)
 params, buffers = net.parameters(), net.buffers()
 data = torch.zeros(2, 10)
 out, buffers = forward(params, data, buffers=buffers, is_training=True)
 
 print(out, buffers)
 
+# %% Basic SGD example
+import torch
+import pax
+
+f = lambda x: x**2
+df_dx = pax.grad(f)
+
+x = torch.tensor(2.0)  # initialization
+for step in range(20):
+    print(x, f(x))
+    x = x - 0.1 * df_dx(x)
+
+
 # %% A small utility to turn optimizers functional
+optimizer = pax.functional_optimizer(torch.optim.Adam, lr=1e-3)
 
+f = lambda x: x**2
+df_dx = pax.grad(f)
+params = torch.tensor(3.)
+opt_state = optimizer.init(params)
 
-#%%
-import inspect
+for step in range(10):
+    params, opt_state = optimizer.step(params, df_dx(params), opt_state)
+    print(params.item())
 
+# %% It also works with schedulers
+import functools
 
-def wrap(f):
-    def call_f(v):
-        frame = inspect.stack()
-        for line in frame:
-            if line.function == "<module>":
-                break
-            print(line.function, line.filename, line.lineno, line.index)
-        return f(v)
-    return call_f
+scheduler = functools.partial(
+    torch.optim.lr_scheduler.LambdaLR, 
+    lr_lambda=lambda step: 1/(step+1)
+)
 
-@wrap
-def f(x):
-    return f"hoi {x}"
-# %%
-wrap(f)(3)
-# %%
+optimizer = pax.functional_optimizer(torch.optim.SGD, lr=.1, scheduler_class=scheduler)
+
+f = lambda x: x**2
+df_dx = pax.grad(f)
+params = torch.tensor(3.)
+opt_state = optimizer.init(params)
+
+for step in range(10):
+    params, opt_state = optimizer.step(params, df_dx(params), opt_state)
+    opt_state = optimizer.scheduler_step(opt_state)
+    print(params.item())

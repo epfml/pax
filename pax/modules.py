@@ -2,7 +2,7 @@ import torch
 from copy import deepcopy
 
 
-def functional(module: torch.nn.Module, preserve_original: bool = True):
+def functional_module(module: torch.nn.Module, preserve_original: bool = True):
     if preserve_original:
         module = deepcopy(module)
 

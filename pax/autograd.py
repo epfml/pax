@@ -1,8 +1,9 @@
-from jax.tree_util import tree_map, tree_flatten, tree_leaves
+from pax.tree_util import tree_map, tree_flatten, tree_leaves
 import inspect
 import torch
 from typing import Callable, Union, Sequence, Tuple, Any
 from pax.utils import CallStack
+from functools import wraps
 
 _gradient_call_stack = CallStack()
 
@@ -22,6 +23,7 @@ def value_and_grad(
     argnums = [argnums] if type(argnums) is int else argnums
 
     @_gradient_call_stack.register
+    @wraps(fun)
     def value_and_grad_f(*args, **kwargs):
         if max(argnums) >= len(args):
             msg = (
