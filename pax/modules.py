@@ -4,7 +4,8 @@ from copy import deepcopy
 
 def functional_module(module: torch.nn.Module, preserve_original: bool = True):
     if preserve_original:
-        module = deepcopy(module)
+        original_device = next(module.parameters()).device
+        module = deepcopy(module).to(original_device)
 
     def forward(params, *args, buffers=None, is_training=True, **kwargs):
         if is_training:

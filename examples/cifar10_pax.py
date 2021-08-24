@@ -68,7 +68,7 @@ def loss(params, inputs, labels):
     outputs = forward(params, inputs)
     return criterion(outputs, labels)
 
-loss_and_gradient = pax.value_and_grad(loss, allow_unused=True)
+loss_and_gradient = pax.value_and_grad(loss)
 
 start_time = time.time_ns()
 
