@@ -1,0 +1,6 @@
+- commit changes
+- update version in setup.py
+- git tag v0.1
+- python setup.py bdist_wheel
+- twine upload dist/...whl
+- git push
