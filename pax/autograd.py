@@ -4,7 +4,7 @@ import torch
 from typing import Callable, Union, Sequence, Tuple, Any
 from pax.utils import CallStack
 
-gradient_stack = CallStack()
+_gradient_call_stack = CallStack()
 
 def value_and_grad(
     fun: Callable,
@@ -21,7 +21,7 @@ def value_and_grad(
     argnums_is_sequence = not (type(argnums) is int)
     argnums = [argnums] if type(argnums) is int else argnums
 
-    @gradient_stack.register
+    @_gradient_call_stack.register
     def value_and_grad_f(*args, **kwargs):
         if max(argnums) >= len(args):
             msg = (
@@ -50,7 +50,7 @@ def value_and_grad(
                 ans, aux = fun(*new_args, **kwargs)
             args_to_pass, treedef = tree_flatten([new_args[a] for a in argnums])
             g = torch.autograd.grad(
-                ans, args_to_pass, allow_unused=allow_unused, create_graph=create_graph or len(gradient_stack) > 1
+                ans, args_to_pass, allow_unused=allow_unused, create_graph=create_graph or len(_gradient_call_stack) > 1
             )
             g = treedef.unflatten(g)
             if not argnums_is_sequence:
