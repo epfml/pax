@@ -47,7 +47,7 @@ x = {"a": 2.0, "b": -1.5}
 pax.value_and_grad(f)(x)  # (tensor(-3.), {'a': tensor(-1.5000), 'b': tensor(2.)})
 ```
 
-PAX also support higher-order derivatives:
+PAX also supports higher-order derivatives:
 ```python
 f = lambda x: 1/6 * x**3
 pax.grad(f)(2.0)  # tensor(2.)
