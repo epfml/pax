@@ -78,7 +78,7 @@ net = torch.nn.Sequential(...)
 forward = pax.functional_module(net)
 
 # intialize
-params, buffers = net.parameters(), net.buffers()
+params, buffers = list(net.parameters()), list(net.buffers())
 
 # run
 data_batch = torch.zeros(2, 10)
