@@ -4,6 +4,11 @@ Sharing some of JAX's beautiful API with PyTorch users.
 Disambiguation: for wardrobes, see [link](https://www.ikea.com/ch/en/cat/pax-system-19086/). For peace, you are at the right spot.
 
 
+## Installation
+```bash
+pip install pax  # depends on torch and jax (for now)
+```
+
 ## Pytrees in PyTorch
 
 ```python
