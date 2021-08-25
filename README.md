@@ -75,6 +75,30 @@ for step in range(20):
     print(x, f(x))
 ```
 
+## Example: meta-learning the learning rate
+
+```python
+f = lambda x: x**2
+df_dx = pax.grad(f)
+
+def sgd(x, lr=0.1, num_steps=10):
+    for _ in range(num_steps):
+        x = x - lr * df_dx(x)
+    return x
+
+# optimize the learning rate
+def meta_loss(lr):
+    x0 = 1.0
+    return f(sgd(x0, lr=lr))
+
+df_dlr = pax.grad(meta_loss)
+
+lr = 0.1
+for i in range(10):
+    lr = lr - 0.1 * df_dlr(lr)
+    print(lr, meta_loss(lr))
+```
+
 ## Converting from PyTorch
 
 We provide a small wrapper for PyTorch _modules_ to make them behave like [Haiku](https://github.com/deepmind/dm-haiku).
