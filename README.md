@@ -94,9 +94,8 @@ def meta_loss(lr):
 df_dlr = pax.grad(meta_loss)
 
 lr = 0.1
-for i in range(10):
+for _ in range(100):
     lr = lr - 0.1 * df_dlr(lr)
-    print(lr, meta_loss(lr))
 ```
 
 ## Converting from PyTorch
