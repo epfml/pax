@@ -7,7 +7,14 @@ Disambiguation: for wardrobes, see [link](https://www.ikea.com/ch/en/cat/pax-sys
 
 ## Installation
 ```bash
-pip install paxlib  # depends on torch and jax (for now)
+pip install paxlib
+```
+
+or 
+```bash
+git clone git@github.com:epfml/pax.git
+cd pax
+python setup.py install
 ```
 
 ## Pytrees in PyTorch
@@ -23,7 +30,7 @@ tree = {
 pax.tree_map(lambda x: x*2, tree)
 ```
 
-Note: we currently depend on `jax` for this functionality, but we would like to remove this dependency.
+Note: we currently depend on `jax` for this functionality, but we could use [dm-tree](https://github.com/deepmind/tree) instead to drop the dependency.
 
 ## Autodiff that looks like JAX
 
