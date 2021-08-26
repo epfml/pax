@@ -47,9 +47,11 @@ def value_and_grad(
                 new_args.append(new_arg)
 
             if not has_aux:
-                ans = fun(*new_args, **kwargs)
+                with torch.enable_grad():
+                    ans = fun(*new_args, **kwargs)
             else:
-                ans, aux = fun(*new_args, **kwargs)
+                with torch.enable_grad():
+                    ans, aux = fun(*new_args, **kwargs)
             args_to_pass, treedef = tree_flatten([new_args[a] for a in argnums])
             g = torch.autograd.grad(
                 ans, args_to_pass, allow_unused=allow_unused, create_graph=create_graph or len(_gradient_call_stack) > 1
