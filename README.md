@@ -132,14 +132,8 @@ for step in range(10):
 
 Using PAX optimizers with learning rate schedulers looks like this:
 ```python
-import functools
-
-scheduler = functools.partial(
-    torch.optim.lr_scheduler.LambdaLR, 
-    lr_lambda=lambda step: 1/(step+1)
-)
-
-optimizer = pax.functional_optimizer(torch.optim.SGD, lr=.1, scheduler_class=scheduler)
+optimizer = pax.functional_optimizer(torch.optim.SGD, lr=0)
+lr_at_step = pax.functional_schedule(torch.optim.lr_scheduler.LambdaLR, lr_lambda=lambda step: 1/(step+1), initial_lr=0.1)
 
 f = lambda x: x**2
 df_dx = pax.grad(f)
@@ -147,8 +141,7 @@ params = torch.tensor(3.)
 opt_state = optimizer.init(params)
 
 for step in range(10):
-    params, opt_state = optimizer.step(params, df_dx(params), opt_state)
-    opt_state = optimizer.scheduler_step(opt_state)  # replaces scheduler.step()
+    params, opt_state = optimizer.step(params, df_dx(params), opt_state, lr=lr_at_step(step))
     print(params.item())
 ```
 
