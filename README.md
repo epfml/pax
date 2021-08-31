@@ -102,13 +102,13 @@ for _ in range(100):
 
 We provide a small wrapper for PyTorch _modules_ to make them behave like [Haiku](https://github.com/deepmind/dm-haiku).
 ```python
-net = torch.nn.Sequential(...)
+net = torch.nn.Linear(10, 1)  # any torch.nn.Module
 
 # convert
 forward = pax.functional_module(net)
 
 # intialize
-params, buffers = list(net.parameters()), list(net.buffers())
+params, buffers = pax.get_params(net), pax.get_buffers(net)
 
 # run
 data_batch = torch.zeros(2, 10)
