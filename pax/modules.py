@@ -38,7 +38,7 @@ def functional_module(module: torch.nn.Module, preserve_original: bool = True):
 
 
 def get_params(module: torch.nn.Module):
-    return OrderedDict(module.named_parameters())
+    return OrderedDict((name, param.detach()) for name, param in module.named_parameters())
 
 
 def get_buffers(module: torch.nn.Module):
