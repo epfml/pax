@@ -41,10 +41,13 @@ def value_and_grad(
         try:
             new_args = []
             for num, arg in enumerate(args):
-                new_arg = tree_map(
-                    lambda x: _force_tensor(x).requires_grad_(num in argnums), arg
-                )
-                new_args.append(new_arg)
+                if num in argnums:
+                    new_arg = tree_map(
+                        lambda x: _force_tensor(x).requires_grad_(), arg
+                    )
+                    new_args.append(new_arg)
+                else:
+                    new_args.append(arg)
 
             if not has_aux:
                 with torch.enable_grad():
