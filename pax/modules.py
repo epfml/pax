@@ -23,7 +23,7 @@ def functional_module(module: torch.nn.Module, preserve_original: bool = True):
             mod._parameters[path[-1]] = params[name]
         
         if buffers is not None:
-            for name, buffer in zip(module.named_buffers()):
+            for name, buffer in module.named_buffers():
                 buffer.data = buffers[name].detach().clone()
 
         out = module(*args, **kwargs)
