@@ -115,7 +115,7 @@ class Cifar100_allcnnc(DeepObsTask):
 registry.task.register("deepobs.cifar100_allcnnc", Cifar100_allcnnc)
 
 
-class Cifar10_3c3d(DeepObsTask):
+class Cifar10_3C3D(DeepObsTask):
     config = {
         "weight_decay": 0.002,
         "eval_batch_size": 1000,
@@ -139,11 +139,11 @@ class Cifar10_3c3d(DeepObsTask):
             return self.config["weight_decay"]
 
 
-registry.task.register("deepobs.cifar10_3c3d", Cifar10_3c3d)
+registry.task.register("deepobs.cifar10_3c3d", Cifar10_3C3D)
 
 
 class FMNIST_2C2D(DeepObsTask):
-    config = {"eval_batch_size": 1000}
+    config = {"eval_batch_size": 1000, "batch_size": 128, "num_epochs": 100}
 
     def __init__(self, device=DEFAULT_DEVICE):
         self._data = registry.dataset("deepobs.fmnist")(device)
@@ -209,7 +209,7 @@ registry.task.register("deepobs.mnist_mlp", MNIST_MLP)
 
 
 class MNIST_VAE(DeepObsTask):
-    config = {"eval_batch_size": 1000}
+    config = {"eval_batch_size": 1000, "batch_size": 64, "num_epochs": 50}
 
     def __init__(self, device=DEFAULT_DEVICE, _data=None):
         if _data is None:
@@ -254,6 +254,8 @@ registry.task.register("deepobs.mnist_vae", MNIST_VAE)
 
 
 class FMNIST_VAE(MNIST_VAE):
+    config = {"eval_batch_size": 1000, "batch_size": 64, "num_epochs": 100}
+
     def __init__(self, device=DEFAULT_DEVICE):
         super.__init__(device, _data=registry.dataset("deepobs.fmnist")(device))
 
@@ -262,7 +264,7 @@ registry.task.register("deepobs.fmnist_vae", FMNIST_VAE)
 
 
 class QuadraticDeep(DeepObsTask):
-    config = {"eval_batch_size": 1000}
+    config = {"eval_batch_size": 1000, "batch_size": 128, "num_epochs": 100}
 
     def __init__(self, device=DEFAULT_DEVICE):
         self._data = registry.dataset("deepobs.quadratic")(device)

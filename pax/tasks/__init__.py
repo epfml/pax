@@ -30,4 +30,5 @@ def get_model(model_name: str) -> Task:
 
 import pax.tasks.datasets.deepobs
 import pax.tasks.models.deepobs
+import pax.tasks.models.timm
 import pax.tasks.tasks.deepobs
