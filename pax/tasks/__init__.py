@@ -1,5 +1,5 @@
-from typing import List
 import importlib
+from typing import List
 
 import pax.tasks.registry as registry
 from pax.tasks.tasks.api import Task
@@ -17,16 +17,24 @@ def list_models() -> List[str]:
     return registry.model.list()
 
 
-def get(task_name: str) -> Task:
-    return registry.task(task_name)
+def get(task_name: str, *args, **kwargs) -> Task:
+    return registry.task(task_name)(*args, **kwargs)
 
 
-def get_dataset(dataset_name: str) -> Task:
-    return registry.dataset(dataset_name)
+def get_dataset(dataset_name: str, *args, **kwargs) -> Task:
+    return registry.dataset(dataset_name)(*args, **kwargs)
 
 
-def get_model(model_name: str) -> Task:
-    return registry.model(model_name)
+def get_model(model_name: str, *args, **kwargs) -> Task:
+    return registry.model(model_name)(*args, **kwargs)
+
+
+def configure(key, value):
+    registry.config[key] = value
+
+
+def list_config() -> dict:
+    return {key: registry.config[key] for key in registry.config.list()}
 
 
 def try_import(module):
@@ -34,6 +42,7 @@ def try_import(module):
         importlib.import_module(module)
     except ModuleNotFoundError:
         pass
+
 
 try_import("pax.tasks.datasets.deepobs")
 try_import("pax.tasks.datasets.torchvision")
