@@ -36,7 +36,10 @@ def try_import(module):
         pass
 
 try_import("pax.tasks.datasets.deepobs")
+try_import("pax.tasks.datasets.torchvision")
 try_import("pax.tasks.models.deepobs")
 try_import("pax.tasks.models.torchvision")
 try_import("pax.tasks.models.timm")
+try_import("pax.tasks.models.resnet20")
 try_import("pax.tasks.tasks.deepobs")
+try_import("pax.tasks.tasks.classification")
