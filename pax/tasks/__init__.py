@@ -1,4 +1,5 @@
 from typing import List
+import importlib
 
 import pax.tasks.registry as registry
 from pax.tasks.tasks.api import Task
@@ -28,7 +29,14 @@ def get_model(model_name: str) -> Task:
     return registry.model(model_name)
 
 
-import pax.tasks.datasets.deepobs
-import pax.tasks.models.deepobs
-import pax.tasks.models.timm
-import pax.tasks.tasks.deepobs
+def try_import(module):
+    try:
+        importlib.import_module(module)
+    except ModuleNotFoundError:
+        pass
+
+try_import("pax.tasks.datasets.deepobs")
+try_import("pax.tasks.models.deepobs")
+try_import("pax.tasks.models.torchvision")
+try_import("pax.tasks.models.timm")
+try_import("pax.tasks.tasks.deepobs")
