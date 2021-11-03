@@ -31,6 +31,9 @@ class Registry:
         return list(self.registry.keys())
 
 def levenshtein_edit_distance(seq1, seq2):
+    """
+    Copied from Frank Hofmann, https://stackabuse.com/levenshtein-distance-and-text-similarity-in-python/
+    """
     size_x = len(seq1) + 1
     size_y = len(seq2) + 1
     matrix = np.zeros ((size_x, size_y))
