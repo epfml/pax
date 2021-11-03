@@ -30,6 +30,7 @@ class TimmModel(Model):
             self.module = timm.create_model(
                 self._model_name, *self._args, **self._kwargs
             )
+            self.module.to(self._device)
         self._forward = pax.functional_module(self.module, preserve_original=False)
         return pax.get_params(self.module), pax.get_buffers(self.module)
 

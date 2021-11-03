@@ -27,6 +27,7 @@ class TorchVisionModel(Model):
         with torch.random.fork_rng():
             torch.manual_seed(seed)
             self.module = self._module(*self._args, **self._kwargs)
+            self.module.to(self._device)
         self._forward = pax.functional_module(self.module, preserve_original=False)
         return pax.get_params(self.module), pax.get_buffers(self.module)
 
