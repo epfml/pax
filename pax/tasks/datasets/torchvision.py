@@ -61,7 +61,7 @@ def cifar10(
                 download=True,
             ),
             device,
-            iterator_defaults={"shuffle": True, "drop_last": True},
+            iterator_defaults={"shuffle": True, "drop_last": True, "batch_size": 128},
         ),
         test=PyTorchDataset(
             torchvision.datasets.CIFAR10(
@@ -71,7 +71,7 @@ def cifar10(
                 download=True,
             ),
             device,
-            iterator_defaults={"shuffle": False, "drop_last": False},
+            iterator_defaults={"shuffle": False, "drop_last": False, "batch_size": 1000},
         ),
     )
 
@@ -93,7 +93,7 @@ def cifar100(
                 download=True,
             ),
             device,
-            iterator_defaults={"shuffle": True, "drop_last": True},
+            iterator_defaults={"shuffle": True, "drop_last": True, "batch_size": 128},
         ),
         test=PyTorchDataset(
             torchvision.datasets.CIFAR100(
@@ -103,7 +103,7 @@ def cifar100(
                 download=True,
             ),
             device,
-            iterator_defaults={"shuffle": False, "drop_last": False},
+            iterator_defaults={"shuffle": False, "drop_last": False, "batch_size": 1000},
         ),
     )
 

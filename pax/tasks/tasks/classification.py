@@ -65,7 +65,7 @@ class ClassificationTask(Task):
 
 
 class Cifar10(ClassificationTask):
-    config = {"weight_decay": 1e-4, "eval_batch_size": 1000}
+    config = {"weight_decay": 1e-4, "eval_batch_size": 1000, "learning_rate": 0.05, "momentum": 0.9, "optimizer": "SGD"}
 
     def __init__(self, model: str = "resnet20", device = DEFAULT_DEVICE):
         data = registry.dataset("torchvision.cifar10")(device=device)
@@ -85,7 +85,7 @@ registry.task.register("cifar10", Cifar10)
 
 
 class Cifar100(ClassificationTask):
-    config = {"weight_decay": 1e-4, "eval_batch_size": 1000}
+    config = {"weight_decay": 1e-4, "eval_batch_size": 1000, "learning_rate": 0.05, "momentum": 0.9, "optimizer": "SGD"}
 
     def __init__(self, model: str = "resnet20", device = DEFAULT_DEVICE):
         data = registry.dataset("torchvision.cifar100")(device=device)

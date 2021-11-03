@@ -51,12 +51,14 @@ class PyTorchDataset(object):
         self, batch_size: int, repeat=False, **iterator_args
     ) -> Iterable[Tuple[float, Batch]]:
         iterator_args = {**self._iterator_defaults, **iterator_args}
+        if batch_size is not None:
+            iterator_args["batch_size"] = batch_size
         if iterator_args["drop_last"]:
-            nn = int(len(self) / batch_size)
+            nn = int(len(self) / iterator_args["batch_size"])
         else:
-            nn = int(math.ceil(len(self) / batch_size))
+            nn = int(math.ceil(len(self) / iterator_args["batch_size"]))
 
-        loader = DataLoader(self._set, batch_size=batch_size, **iterator_args)
+        loader = DataLoader(self._set, **iterator_args)
 
         step = 0
         for _ in itertools.count() if repeat else [0]:
