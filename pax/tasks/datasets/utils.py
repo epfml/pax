@@ -48,7 +48,7 @@ class PyTorchDataset(object):
         return SupervisedBatch(x, y, progress).to(self._device)
 
     def iterator(
-        self, batch_size: int, repeat=False, **iterator_args
+        self, batch_size: int = None, repeat = False, **iterator_args
     ) -> Iterable[Tuple[float, Batch]]:
         iterator_args = {**self._iterator_defaults, **iterator_args}
         if batch_size is not None:
