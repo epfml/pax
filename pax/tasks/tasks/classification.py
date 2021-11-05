@@ -3,7 +3,7 @@ from typing import Mapping
 import pax.tasks.registry as registry
 import regex as re
 import torch
-from pax.tasks.datasets.api import Batch, Dataset
+from pax.tasks.datasets.api import Batch
 from pax.tasks.models.api import Buffers, Model, Params, Tuple
 from pax.tasks.tasks.api import Task
 
@@ -54,8 +54,15 @@ class ClassificationTask(Task):
                 params, batch.x, buffers=buffers, is_training=is_training
             )
             loss = torch.nn.functional.cross_entropy(output, batch.y)
-            accuracy = torch.argmax(output, 1).eq(batch.y).float().mean()
-            return {"loss": loss, "accuracy": accuracy}
+            predictions = torch.argmax(output, 1)
+            accuracy = predictions.eq(batch.y).float().mean()
+            if self.train.num_classes == 2:
+                precision = ((predictions == 1) & (batch.y == 1)).sum() / (predictions == 1).sum()
+                recall = ((predictions == 1) & (batch.y == 1)).sum() / (batch.y == 1).sum()
+                f1 = (2 * precision * recall) / (precision + recall)
+                return {"loss": loss, "accuracy": accuracy, "f1": f1}
+            else:
+                return {"loss": loss, "accuracy": accuracy}
 
     def _weight_decay_for_param(self, param_name: str) -> float:
         return 0.0
@@ -125,3 +132,26 @@ def _parameter_type(parameter_name):
     else:
         return "other"
 
+
+class LogisticRegression(ClassificationTask):
+    config = {"eval_batch_size": 1000}
+
+    def __init__(self, dataset: str, weight_decay=0, num_classes=None, device=DEFAULT_DEVICE):
+        data = registry.dataset(dataset)(device=device)
+        self.train = data.train
+        self.test = data.test
+        self.weight_decay = weight_decay
+        example_batch = next(iter(self.train.iterator(batch_size=1)))
+
+        if num_classes is None:
+            num_classes = data.train.num_classes
+
+        self.model: Model = registry.model("linear")(in_features=example_batch.x.shape[-1], out_features=num_classes, device=device)
+
+        super().__init__(device)
+
+    def _weight_decay_for_param(self, param_name: str) -> float:
+        return self.weight_decay
+
+
+registry.task.register("logistic-regression", LogisticRegression)

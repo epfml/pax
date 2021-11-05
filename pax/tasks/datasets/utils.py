@@ -37,6 +37,10 @@ class PyTorchDataset(object):
     def __len__(self):
         return len(self._set)
 
+    @property
+    def num_classes(self):
+        return len(self._set.classes)
+
     def prepare_batch(self, batch, progress):
         if len(batch) == 2:
             x, y = batch

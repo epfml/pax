@@ -21,3 +21,7 @@ class Dataset:
 
     def __len__(self) -> int:
         pass
+
+    @property
+    def num_classes(self) -> int:
+        pass

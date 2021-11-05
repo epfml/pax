@@ -1,7 +1,5 @@
 from typing import NamedTuple
 
-from torchvision.datasets import cifar
-
 import pax.tasks.registry as registry
 import torch
 from pax.tasks.datasets.utils import PyTorchDataset
@@ -9,10 +7,6 @@ from pax.tasks.datasets.utils import PyTorchDataset
 import torchvision
 
 DEFAULT_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-def _wrap_dataset(dataset, iterator_defaults, device=DEFAULT_DEVICE):
-    return PyTorchDataset(dataset, device, iterator_defaults=iterator_defaults)
 
 
 class TrainTest(NamedTuple):
