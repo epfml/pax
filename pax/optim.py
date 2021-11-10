@@ -1,5 +1,6 @@
 from typing import Any, Callable, NamedTuple, Tuple, Optional
 from copy import copy, deepcopy
+from typing import List
 
 import torch
 

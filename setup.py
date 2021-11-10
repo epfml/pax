@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="paxlib",
-    version="0.3.1",
+    version="0.3.2",
     description="JAX-like API on top of PyTorch",
     url="http://github.com/epfml/pax",
     author="Thijs Vogels",
