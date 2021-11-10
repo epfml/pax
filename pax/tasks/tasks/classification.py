@@ -56,13 +56,7 @@ class ClassificationTask(Task):
             loss = torch.nn.functional.cross_entropy(output, batch.y)
             predictions = torch.argmax(output, 1)
             accuracy = predictions.eq(batch.y).float().mean()
-            if self.train.num_classes == 2:
-                precision = ((predictions == 1) & (batch.y == 1)).sum() / (predictions == 1).sum()
-                recall = ((predictions == 1) & (batch.y == 1)).sum() / (batch.y == 1).sum()
-                f1 = (2 * precision * recall) / (precision + recall)
-                return {"loss": loss, "accuracy": accuracy, "f1": f1}
-            else:
-                return {"loss": loss, "accuracy": accuracy}
+            return {"loss": loss, "accuracy": accuracy}
 
     def _weight_decay_for_param(self, param_name: str) -> float:
         return 0.0
