@@ -259,7 +259,7 @@ def covtype_binary(device: torch.DeviceObjType = DEFAULT_DEVICE):
 
     train, test = torch.utils.data.random_split(dataset, [num_train, num_test], generator)
 
-    return TrainValidTest(
+    return TrainTest(
         train=PyTorchDataset(
             train,
             device,
