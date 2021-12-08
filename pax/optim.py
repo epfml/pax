@@ -65,8 +65,8 @@ def functional_optimizer(base_optimizer_class, *args, **kwargs):
 
         return new_params, OptState(new_base_optimizer)
 
-    def compute_update(params: Params, grads: Gradients, opt_state: OptState):
-        new_params, new_opt_state = step(params, grads, opt_state)
+    def compute_update(params: Params, grads: Gradients, opt_state: OptState, **kwargs):
+        new_params, new_opt_state = step(params, grads, opt_state, **kwargs)
         updates = pax.tree_map(lambda a, b: a - b.data, new_params, params)
         return updates, new_opt_state
 
