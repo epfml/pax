@@ -17,7 +17,7 @@ CACHE_DIR = os.getenv("LIBSVM_DATASET_DIR", os.path.join(os.getenv("HOME"), "lib
 
 
 class LibSVMDataset(torch.utils.data.Dataset):
-    def __init__(self, url, data_root=CACHE_DIR, download=False, md5=None, dimensionality=None):
+    def __init__(self, url, data_root=CACHE_DIR, download=False, md5=None, dimensionality=None, classes=None):
         self.url = url
         self.data_root = data_root
         self._dimensionality = dimensionality
@@ -54,7 +54,9 @@ class LibSVMDataset(torch.utils.data.Dataset):
             self._is_sparse = True
 
         # convert labels to [0, 1, ...]
-        self.classes = np.sort(np.unique(y))
+        if classes is None:
+            classes = np.unique(y)
+        self.classes = np.sort(classes)
         self.targets = torch.zeros(len(y), dtype=torch.int64)
         for i, label in enumerate(self.classes):
             self.targets[y == label] = i
@@ -173,7 +175,7 @@ class MNIST(LibSVMDataset):
             md5 = "a4aafe182113f147e3068d37760ece9d"
         else:
             raise RuntimeError(f"Unavailable split {split}")
-        super().__init__(url=url, md5=md5, download=download, data_root=data_root, dimensionality=28*28)
+        super().__init__(url=url, md5=md5, download=download, data_root=data_root, dimensionality=28*28, classes=np.arange(10))
 
 
 class RCV1MultiClass(LibSVMDataset):
@@ -186,7 +188,7 @@ class RCV1MultiClass(LibSVMDataset):
             md5 = "68a377cfff6f4a82edac1975b148afd3"
         else:
             raise RuntimeError(f"Unavailable split {split}")
-        super().__init__(url=url, md5=md5, download=download, data_root=data_root)
+        super().__init__(url=url, md5=md5, download=download, data_root=data_root, classes=np.arange(53))
 
 
 class RCV1Binary(LibSVMDataset):
