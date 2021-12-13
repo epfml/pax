@@ -369,4 +369,4 @@ def rcv1_multiclass(device: torch.DeviceObjType = DEFAULT_DEVICE,):
     )
 
 
-registry.dataset.register("libsvm.rcv1-multilabel", rcv1_multiclass)
+registry.dataset.register("libsvm.rcv1-multiclass", rcv1_multiclass)
