@@ -140,7 +140,7 @@ class LogisticRegression(ClassificationTask):
         example_batch = next(iter(self.train.iterator(batch_size=1)))
 
         if num_classes is None:
-            num_classes = data.train.num_classes
+            num_classes = max(data.train.num_classes, data.test.num_classes)
 
         self.model: Model = registry.model("linear")(in_features=example_batch.x.shape[-1], out_features=num_classes, device=device)
 
