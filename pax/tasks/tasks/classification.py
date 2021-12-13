@@ -56,7 +56,7 @@ class ClassificationTask(Task):
             loss = torch.nn.functional.cross_entropy(output, batch.y)
             predictions = torch.argmax(output, 1)
             accuracy = predictions.eq(batch.y).float().mean()
-            predicted_probs = torch.nn.functional.softmax(output)
+            predicted_probs = torch.nn.functional.softmax(output, dim=-1)
             soft_accuracy = predicted_probs[torch.arange(len(batch), device=predicted_probs.device), batch.y].mean()
             return {"loss": loss, "accuracy": accuracy, "soft_accuracy": soft_accuracy}
 
