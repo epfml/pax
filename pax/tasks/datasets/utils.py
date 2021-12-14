@@ -20,7 +20,7 @@ class SupervisedBatch(Batch):
         return SupervisedBatch(self.x.to(device), self.y.to(device), self.progress)
 
 
-class PyTorchDataset(object):
+class PyTorchDataset(Dataset):
     def __init__(self, dataset, device, prepare_batch=None, iterator_defaults={}):
         self._set = dataset
         self._device = device
@@ -36,6 +36,16 @@ class PyTorchDataset(object):
 
     def __len__(self):
         return len(self._set)
+
+    def subsample(self, size, generator) -> "PyTorchDataset":
+        indices = torch.randperm(len(self._set), generator=generator)[:size]
+        dataset = torch.utils.data.Subset(self._set, indices)
+        return PyTorchDataset(
+            dataset,
+            self._device,
+            prepare_batch=self.prepare_batch,
+            iterator_defaults=self._iterator_defaults
+        )
 
     @property
     def num_classes(self):
