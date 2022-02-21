@@ -10,6 +10,7 @@ from jax.tree_util import (
     tree_unflatten,
 )
 
+
 def tree_sum(tree) -> torch.Tensor:
     """Sum of the leaves of a tree"""
     return sum(tree_leaves(tree))
