@@ -11,7 +11,7 @@ from jax.tree_util import (
 )
 
 
-def ravel_pytree(pytree) -> Tuple[torch.Tensor, Callable[[torch.Tensor], Any]]:
+def tree_ravel(pytree) -> Tuple[torch.Tensor, Callable[[torch.Tensor], Any]]:
     """Ravel (i.e. flatten) a pytree of arrays down to a 1D array.
 
     Args:
