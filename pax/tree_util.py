@@ -10,12 +10,62 @@ from jax.tree_util import (
     tree_unflatten,
 )
 
+def tree_sum(tree) -> torch.Tensor:
+    """Sum of the leaves of a tree"""
+    return sum(tree_leaves(tree))
+
+
+def tree_norm_sq(tree: Any) -> torch.Tensor:
+    """Squared Frobenius norm of the flattened tree"""
+    return tree_sum(tree_map(lambda x: x.square().sum(), tree))
+
+
+def tree_norm(tree: Any) -> torch.Tensor:
+    """Frobenius norm of the flattened tree"""
+    return torch.sqrt(tree_norm_sq(tree))
+
+
+def tree_numel(tree: Any) -> int:
+    """Number of elements in tensors in a PyTree"""
+    return tree_sum(tree_map(lambda x: x.numel(), tree))
+
+
+def tree_dot(tree_a: Any, tree_b: Any) -> torch.Tensor:
+    """Dot product of two trees"""
+    return tree_sum(tree_map(lambda a, b: (a * b).sum(), tree_a, tree_b))
+
+
+def tree_add(tree_a: Any, tree_b: Any, alpha=None) -> Any:
+    """Add two trees, with an optional weight alpha"""
+    if alpha is not None:
+        return tree_map(lambda a, b: a + alpha * b, tree_a, tree_b)
+    else:
+        return tree_map(lambda a, b: a + b, tree_a, tree_b)
+
+
+def tree_subtract(tree_a: Any, tree_b: Any, alpha=None) -> Any:
+    """Subtract two trees, with an optional weight alpha"""
+    if alpha is not None:
+        return tree_map(lambda a, b: a - alpha * b, tree_a, tree_b)
+    else:
+        return tree_map(lambda a, b: a - b, tree_a, tree_b)
+
+
+def tree_neg(tree: Any) -> Any:
+    """- tree"""
+    return tree_map(torch.neg, tree)
+
+
+def tree_clone(tree: Any):
+    """Clone all tensors in the tree"""
+    return tree_map(torch.clone, tree)
+
 
 def tree_ravel(pytree) -> Tuple[torch.Tensor, Callable[[torch.Tensor], Any]]:
-    """Ravel (i.e. flatten) a pytree of arrays down to a 1D array.
+    """Ravel (i.e. flatten) a tree of arrays down to a 1D array.
 
     Args:
-        pytree: a pytree of arrays and scalars to ravel.
+        tree: a tree of arrays and scalars to ravel.
 
     Returns:
         A pair where the first element is a 1D array representing the flattened and
