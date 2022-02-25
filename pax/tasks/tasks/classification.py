@@ -1,7 +1,7 @@
 from typing import Mapping
 
 import pax.tasks.registry as registry
-import regex as re
+import re
 import torch
 from pax.tasks.datasets.api import Batch
 from pax.tasks.models.api import Buffers, Model, Params, Tuple
