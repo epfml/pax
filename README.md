@@ -12,9 +12,7 @@ pip install paxlib
 
 or 
 ```bash
-git clone git@github.com:epfml/pax.git
-cd pax
-python setup.py install
+pip install git+https://github.com/epfml/pax.git
 ```
 
 ## Pytrees in PyTorch
